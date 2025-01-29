@@ -57,12 +57,10 @@ function Player:drawFacingLeft()
     love.graphics.draw(self.image, self.x + 100, self.y, 0, -1, 1)
 end
 
-function Player:keyPressed(key, isPaused)
-    if not isPaused then
-        --If the spacebar is pressed
-        if key == "space" then
-            --Put a new instance of Bullet inside listOfBullets.
-            table.insert(Fireballs, Fireball(self.x, self.y))
-        end
+function Player:keyPressed(key)
+    --If the spacebar is pressed
+    if key == "space" then
+        --Put a new instance of Bullet inside listOfBullets.
+        table.insert(Fireballs, Fireball(self.x, self.y))
     end
 end

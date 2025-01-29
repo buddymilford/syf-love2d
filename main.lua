@@ -4,12 +4,12 @@ end
 
 function love.load()
     Object = require "classic"
-    require "overlay"
+    require "menu"
     require "player"
     require "fireball"
     require "enemy"
 
-    Overlay = Overlay()
+    Menu = Menu()
     Player = Player()
     Fireballs = {}
     Enemy = Enemy()
@@ -17,13 +17,23 @@ function love.load()
     love.graphics.setBackgroundColor(1, 1, 1)
 end
 
+local function reset()
+    Menu.isGameOver = true;
+    Fireballs = {}
+    Player.x = 325
+    Enemy.x = 350
+    Enemy.speed = 0
+    Enemy.tempSpeed = 100
+    Enemy.speedIncrease = 0
+end
+
 function love.update(dt)
-    if Overlay.isStart == false then
-        Player:update(dt, Overlay.isPaused)
-        Enemy:update(dt, Overlay.isPaused)
+    if Menu.isStart == false and Menu.isGameOver == false then
+        Player:update(dt, Menu.isPaused)
+        Enemy:update(dt, Menu.isPaused)
 
         for i, v in ipairs(Fireballs) do
-            v:update(dt, Overlay.isPaused)
+            v:update(dt, Menu.isPaused)
             v:checkCollision(Enemy)
 
             --If the bullet has the property dead and it's true then..
@@ -31,17 +41,26 @@ function love.update(dt)
                 --Remove it from the list
                 table.remove(Fireballs, i)
             end
+
+            if v.outOfBounds then
+                table.remove(Fireballs, i)
+                reset()
+            end
+        end
+
+        if Menu.isQuit then
+            reset()
         end
     end
 end
 
 function love.draw()
-    if Overlay.isPaused or Overlay.isStart then
-        Overlay:draw()
-    else 
+    if Menu:isActive() then
+        Menu:draw()
+    else
         Player:draw()
         Enemy:draw()
-    
+
         for i, v in ipairs(Fireballs) do
             v:draw()
         end
@@ -49,8 +68,10 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    Overlay:keyPressed(key)
-    Player:keyPressed(key, Overlay.isPaused)
+    Menu:keyPressed(key)
+    if not Menu:isActive() then
+        Player:keyPressed(key)
+    end
 end
 
 local love_errorhandler = love.errorhandler

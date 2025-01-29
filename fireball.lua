@@ -10,6 +10,7 @@ function Fireball:new(x, y)
     --We'll need these for collision checking
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
+    self.outOfBounds = false
 end
 
 function Fireball:update(dt, isPaused)
@@ -21,8 +22,7 @@ function Fireball:update(dt, isPaused)
 
         --If the bullet is out of the screen
         if self.y > love.graphics.getHeight() then
-            --Restart the game
-            -- love.load()
+            self.outOfBounds = true
         end
     end
 end
