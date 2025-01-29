@@ -4,12 +4,12 @@ end
 
 function love.load()
     Object = require "classic"
-    require "startscreen"
+    require "overlay"
     require "player"
     require "fireball"
     require "enemy"
 
-    StartScreen = StartScreen()
+    Overlay = Overlay()
     Player = Player()
     Fireballs = {}
     Enemy = Enemy()
@@ -18,12 +18,12 @@ function love.load()
 end
 
 function love.update(dt)
-    if StartScreen.isShowing == false then
-        Player:update(dt)
-        Enemy:update(dt)
+    if Overlay.isStart == false then
+        Player:update(dt, Overlay.isPaused)
+        Enemy:update(dt, Overlay.isPaused)
 
-        for i,v in ipairs(Fireballs) do
-            v:update(dt)
+        for i, v in ipairs(Fireballs) do
+            v:update(dt, Overlay.isPaused)
             v:checkCollision(Enemy)
 
             --If the bullet has the property dead and it's true then..
@@ -36,24 +36,21 @@ function love.update(dt)
 end
 
 function love.draw()
-    if StartScreen.isShowing then
-        StartScreen:draw()
-    else
+    if Overlay.isPaused or Overlay.isStart then
+        Overlay:draw()
+    else 
         Player:draw()
         Enemy:draw()
-
-        for i,v in ipairs(Fireballs) do
+    
+        for i, v in ipairs(Fireballs) do
             v:draw()
         end
     end
 end
 
 function love.keypressed(key)
-    if StartScreen.isShowing then
-        StartScreen:keyPressed(key)
-    else
-        Player:keyPressed(key)
-    end
+    Overlay:keyPressed(key)
+    Player:keyPressed(key, Overlay.isPaused)
 end
 
 local love_errorhandler = love.errorhandler
