@@ -46,8 +46,10 @@ function Menu:keyPressed(key)
         self.isPaused = not self.isPaused
     end
 
-    if key == "backspace" then
-        self.isQuit = true
+    if not self.isPaused then
+        if key == "backspace" then
+            self.isQuit = true
+        end
     end
 end
 
